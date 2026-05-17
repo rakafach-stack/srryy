@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>I'm Sorry...</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',sans-serif;
+}
+
+html,body{
+    width:100%;
+    min-height:100%;
+    overflow-x:hidden;
+}
+
+body{
+    background:linear-gradient(180deg,#0f172a,#1e293b,#334155);
+    position:relative;
+    color:white;
+}
+
+/* ===== HUJAN ===== */
+.rain{
+    position:fixed;
+    width:2px;
+    height:90px;
+    background:rgba(255,255,255,0.25);
+    top:-120px;
+    animation:rainFall linear infinite;
+}
+
+@keyframes rainFall{
+    to{
+        transform:translateY(120vh);
+    }
+}
+
+/* ===== OVERLAY ===== */
+.overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.25);
+    backdrop-filter:blur(2px);
+    z-index:1;
+}
+
+/* ===== MAIN ===== */
+.container{
+    position:relative;
+    z-index:2;
+    width:100%;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    padding:40px 20px 100px;
+}
+
+/* ===== START ===== */
+#start{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+}
+
+.title{
+    font-size:34px;
+    font-weight:700;
+    margin-bottom:15px;
+}
+
+.subtitle{
+    opacity:0.8;
+    font-size:15px;
+    max-width:300px;
+    line-height:1.6;
+}
+
+.open-btn{
+    margin-top:35px;
+    padding:13px 30px;
+    border:none;
+    border-radius:40px;
+    background:rgba(255,255,255,0.12);
+    color:white;
+    backdrop-filter:blur(10px);
+    font-size:14px;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 10px 25px rgba(0,0,0,0.3);
+}
+
+.open-btn:hover{
+    transform:scale(1.04);
+}
+
+/* ===== MESSAGE ===== */
+#message{
+    display:none;
+    width:100%;
+    flex-direction:column;
+    align-items:center;
+}
+
+.paper{
+    width:95%;
+    max-width:420px;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(14px);
+    border:1px solid rgba(255,255,255,0.08);
+    border-radius:22px;
+    padding:22px;
+    margin-top:20px;
+    line-height:1.8;
+    font-size:14px;
+    opacity:0;
+    transform:translateY(40px);
+    animation:paperUp 0.8s ease forwards;
+    box-shadow:0 12px 30px rgba(0,0,0,0.35);
+}
+
+@keyframes paperUp{
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* ===== BUTTON END ===== */
+.choice{
+    margin-top:40px;
+    display:flex;
+    gap:20px;
+    flex-wrap:wrap;
+    justify-content:center;
+}
+
+.choice button{
+    padding:12px 24px;
+    border:none;
+    border-radius:30px;
+    cursor:pointer;
+    font-size:14px;
+    transition:0.3s;
+}
+
+.forgive{
+    background:#ffffff;
+    color:#111827;
+}
+
+.silent{
+    background:rgba(255,255,255,0.1);
+    color:white;
+    backdrop-filter:blur(10px);
+}
+
+.choice button:hover{
+    transform:scale(1.05);
+}
+
+/* ===== FINAL TEXT ===== */
+#finalText{
+    margin-top:35px;
+    font-size:15px;
+    opacity:0;
+    transition:0.6s;
+    text-align:center;
+    max-width:320px;
+    line-height:1.7;
+}
+
+/* ===== LIGHT EFFECT ===== */
+.light{
+    position:fixed;
+    width:250px;
+    height:250px;
+    background:rgba(255,255,255,0.05);
+    border-radius:50%;
+    filter:blur(60px);
+    z-index:0;
+}
+
+.light1{
+    top:-50px;
+    left:-50px;
+}
+
+.light2{
+    bottom:-80px;
+    right:-80px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="overlay"></div>
+
+<div class="light light1"></div>
+<div class="light light2"></div>
+
+<div class="container">
+
+    <!-- START -->
+    <div id="start">
+        <div class="title">i'm sorry...</div>
+
+        <div class="subtitle">
+            aku cuma punya sesuatu yang ingin disampaikan.
+        </div>
+
+        <button class="open-btn" onclick="openMessage()">
+            open message
+        </button>
+    </div>
+
+    <!-- MESSAGE -->
+    <div id="message">
+        <div id="papers"></div>
+
+        <div class="choice">
+            <button class="forgive" onclick="forgive()">
+                i forgive you
+            </button>
+
+            <button class="silent" onclick="silent()">
+                ...
+            </button>
+        </div>
+
+        <div id="finalText"></div>
+    </div>
+
+</div>
+    <audio id="bgm" loop>
+    <source src="maaf.mp3" type="audio/mpeg">
+</audio>
+    
+
+
+<script>
+
+/* ===== HUJAN ===== */
+for(let i=0;i<80;i++){
+    let rain=document.createElement("div");
+    rain.className="rain";
+
+    rain.style.left=Math.random()*100+"vw";
+    rain.style.animationDuration=(0.6+Math.random()*0.7)+"s";
+    rain.style.opacity=Math.random();
+
+    document.body.appendChild(rain);
+}
+
+/* ===== OPEN MESSAGE ===== */
+function openMessage(){
+     document.getElementById("bgm").play();
+    document.getElementById("start").style.display="none";
+    document.getElementById("message").style.display="flex";
+
+    const texts=[
+        "aku tahu mungkin aku banyak salah dan beberapa sikapku bikin nayaa kesel, sedih, dan kecewa",
+        
+        "sebenarnya aku ga pernah berniat kayaa gituu ke kamu, tapi kadang aku terlalu bodoh buat ngerti cara memperlakukan seseorang dengan benar, apalagi ketika ego aku tinggi",
+        
+        "jujur... aku beneran mintaa maaf buat semuanyaa, yaaa? maaf udaah bikin sedih, kesel, atau kecewa. kedepaannyaa aku bakal belajar buat nahan ego akuu",
+        
+        "aku ga minta semuanya langsung baik lagi kayaa semulaa, tapii tolongg kasih tau aku kaloo nayaa kenapa napaa, akuu gaa mau nayaa sedih teruss, you'll always have me💞"
+    ];
+
+    const papers=document.getElementById("papers");
+
+    texts.forEach((text,index)=>{
+
+        let paper=document.createElement("div");
+        paper.className="paper";
+        paper.style.animationDelay=(index*0.5)+"s";
+        paper.innerHTML=text;
+
+        papers.appendChild(paper);
+
+    });
+
+}
+
+/* ===== BUTTON ===== */
+function forgive(){
+
+    const final=document.getElementById("finalText");
+
+    final.style.opacity="1";
+    final.innerHTML=
+    "terima kasih karena masih mau berada di sinii 🤍";
+
+    document.body.style.background=
+    "linear-gradient(180deg,#1e3a8a,#2563eb,#60a5fa)";
+}
+
+function silent(){
+
+    const final=document.getElementById("finalText");
+
+    final.style.opacity="1";
+    final.innerHTML=
+    "gapapaaa, kaloo gaa bales pesan aku di whatsapp ^____^";
+}
+
+</script>
+
+</body>
+  </html>
